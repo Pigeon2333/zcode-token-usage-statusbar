@@ -18,7 +18,7 @@ import zlib
 
 PLUGIN = "zcode-token-usage-statusbar"
 PREFIX = "plugins/" + PLUGIN + "/"
-PLUGIN_ID = PLUGIN + "@zusage-marketplace"
+PLUGIN_ID = PLUGIN + "@zusage-fork-marketplace"
 MAX_JSON = 256 * 1024
 MAX_ARCHIVE = 16 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
@@ -232,7 +232,7 @@ def identities(data, version):
             "plugin manifests disagree")
     require(plugin.get("name") == PLUGIN and stable_version(plugin.get("version")) == version,
             "plugin name/version disagrees")
-    require(market.get("name") == "zusage-marketplace", "marketplace identity disagrees")
+    require(market.get("name") == "zusage-fork-marketplace", "marketplace identity disagrees")
     entries = market.get("plugins")
     require(isinstance(entries, list) and len(entries) == 1 and isinstance(entries[0], dict),
             "marketplace must contain exactly one plugin")

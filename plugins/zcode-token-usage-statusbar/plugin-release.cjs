@@ -6,7 +6,7 @@ const os = require("os");
 const crypto = require("crypto");
 const { execFile } = require("child_process");
 
-const PLUGIN_ID = "zcode-token-usage-statusbar@zusage-marketplace";
+const PLUGIN_ID = "zcode-token-usage-statusbar@zusage-fork-marketplace";
 const STABLE = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 const MAX_ASSET = 16 * 1024 * 1024;
 const MAX_JSON = 256 * 1024;
@@ -111,8 +111,8 @@ function readCatalog(root) {
   // 市场缓存清单只用来识别“源码清单”这一形态；事务进行中、缺失或损坏时按未知处理，
   // 由后续 Release 流程报出准确原因。
   try {
-    if (fs.existsSync(path.join(root, "marketplaces", ".zusage-marketplace.transaction.json"))) return null;
-    return JSON.parse(fs.readFileSync(path.join(root, "marketplaces", "zusage-marketplace", "marketplace.json"), "utf8"));
+    if (fs.existsSync(path.join(root, "marketplaces", ".zusage-fork-marketplace.transaction.json"))) return null;
+    return JSON.parse(fs.readFileSync(path.join(root, "marketplaces", "zusage-fork-marketplace", "marketplace.json"), "utf8"));
   } catch (e) { return null; }
 }
 function readChannel(home, root = require("./plugin-storage.cjs").resolvePluginStorage(home)) {
@@ -120,9 +120,9 @@ function readChannel(home, root = require("./plugin-storage.cjs").resolvePluginS
   const data = JSON.parse(fs.readFileSync(file, "utf8"));
   const entries = data && data.marketplaces;
   if (!Array.isArray(entries)) throw new Error("插件市场来源记录无效");
-  const matches = entries.filter((m) => m && (m.id === "zusage-marketplace" || m.name === "zusage-marketplace"));
+  const matches = entries.filter((m) => m && (m.id === "zusage-fork-marketplace" || m.name === "zusage-fork-marketplace"));
   const market = matches.length === 1 ? matches[0] : null;
-  if (!market || !market.source || typeof market.source !== "object") throw new Error("未找到 zusage-marketplace 的注册来源");
+  if (!market || !market.source || typeof market.source !== "object") throw new Error("未找到 zusage-fork-marketplace 的注册来源");
   const source = market.source;
   if (source.source === "directory") return { kind: "local", marketplace: market };
   // 仓库来源但清单指向源码（默认分支的 ./plugins/... 路径源）时没有可校验的 Release：
@@ -256,7 +256,7 @@ function githubReleaseFromCatalog(catalog, repository) {
   const matches = Array.isArray(entries) ? entries.filter((p) => p && p.name === "zcode-token-usage-statusbar") : [];
   const entry = matches.length === 1 ? matches[0] : null;
   const source = entry && entry.source;
-  if (!catalog || catalog.name !== "zusage-marketplace" || !entry || typeof entry.version !== "string" ||
+  if (!catalog || catalog.name !== "zusage-fork-marketplace" || !entry || typeof entry.version !== "string" ||
       !STABLE.test(entry.version) || !source || typeof source !== "object" || source.source !== "url" ||
       source.type !== "zip" || typeof source.url !== "string" || source.headers !== undefined ||
       (source.stripRoot !== undefined && source.stripRoot !== false) ||
@@ -357,7 +357,7 @@ function gitcodeReleaseFromCatalog(catalog, repository) {
   const matches = Array.isArray(entries) ? entries.filter((p) => p && p.name === "zcode-token-usage-statusbar") : [];
   const entry = matches.length === 1 ? matches[0] : null;
   const source = entry && entry.source;
-  if (!catalog || catalog.name !== "zusage-marketplace" || !entry || typeof entry.version !== "string" ||
+  if (!catalog || catalog.name !== "zusage-fork-marketplace" || !entry || typeof entry.version !== "string" ||
       !STABLE.test(entry.version) || !source || typeof source !== "object" || source.source !== "url" ||
       source.type !== "zip" || typeof source.url !== "string" || source.headers !== undefined ||
       (source.stripRoot !== undefined && source.stripRoot !== false) ||

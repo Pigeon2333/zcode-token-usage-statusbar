@@ -396,7 +396,7 @@ function migrate() {
     if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("同步验收记录不是 JSON 对象: " + file);
     return value;
   };
-  const root = fs.realpathSync(pluginRoot), id = "zcode-token-usage-statusbar@zusage-marketplace";
+  const root = fs.realpathSync(pluginRoot), id = "zcode-token-usage-statusbar@zusage-fork-marketplace";
   const manifest = readObject(path.join(root, ".zcode-plugin", "plugin.json"), null);
   if (!manifest || manifest.name !== id.split("@")[0]) throw Error("同步插件清单身份无效");
   updater.compareVersions(manifest.version, manifest.version);
@@ -418,7 +418,7 @@ function migrate() {
     if (live(pending.pendingPid)) throw Error("插件安装进程仍在运行，停止运行时同步");
   }
   const storage = resolvePluginStorage(os.homedir(), process.env);
-  if (fs.existsSync(path.join(storage, "marketplaces", ".zusage-marketplace.transaction.json"))) throw Error("官方市场事务尚未完成，停止运行时同步");
+  if (fs.existsSync(path.join(storage, "marketplaces", ".zusage-fork-marketplace.transaction.json"))) throw Error("官方市场事务尚未完成，停止运行时同步");
   const inventory = readObject(path.join(storage, "installed_plugins.json"), null);
   if (inventory && !Array.isArray(inventory.plugins)) throw Error("官方安装记录形状无效");
   const records = inventory ? inventory.plugins.filter(row => row && row.id === id && row.scope === "user") : [];

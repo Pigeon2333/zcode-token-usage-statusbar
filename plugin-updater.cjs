@@ -8,7 +8,7 @@ const { isDeepStrictEqual } = require("util");
 const releaseChannel = require("./plugin-release.cjs");
 const { resolvePluginStorage } = require("./plugin-storage.cjs");
 
-const PLUGIN_ID = "zcode-token-usage-statusbar@zusage-marketplace";
+const PLUGIN_ID = "zcode-token-usage-statusbar@zusage-fork-marketplace";
 const INTERVAL_MS = 60 * 60 * 1000;
 // 仓库改名只会表现为这两类来源校验失败（plugin-release.cjs 的 validateRelease / githubReleaseFromCatalog），
 // 文案变动须同步；tests/plugin-release-updater.test.cjs 的改名用例走真实校验函数，失配会变红。
@@ -272,7 +272,7 @@ function verifyRuntimeSync(options) {
     catch (error) { if (error.code !== "ESRCH") throw error; }
   }
   const storage = resolvePluginStorage(home, env);
-  if (fs.existsSync(path.join(storage, "marketplaces", ".zusage-marketplace.transaction.json"))) throw new Error("官方市场事务尚未完成，停止运行时同步");
+  if (fs.existsSync(path.join(storage, "marketplaces", ".zusage-fork-marketplace.transaction.json"))) throw new Error("官方市场事务尚未完成，停止运行时同步");
   const inventory = readObject(path.join(storage, "installed_plugins.json"), null);
   if (inventory && !Array.isArray(inventory.plugins)) throw new Error("官方安装记录形状无效");
   const records = inventory ? inventory.plugins.filter((row) => row && row.id === PLUGIN_ID && row.scope === "user") : [];
@@ -375,8 +375,8 @@ function createUpdater(options) {
   const prepareRelease = options.prepareRelease || ((release, onProgress) => releaseChannel.downloadRelease(release, python(), fetchRelease, undefined, onProgress));
   const readReleaseCatalog = options.readReleaseCatalog || (() => {
     const root = path.join(storage(), "marketplaces");
-    if (fs.existsSync(path.join(root, ".zusage-marketplace.transaction.json"))) throw new Error("官方插件市场事务尚未完成，请稍后重试");
-    return readJson(path.join(root, "zusage-marketplace", "marketplace.json"), null);
+    if (fs.existsSync(path.join(root, ".zusage-fork-marketplace.transaction.json"))) throw new Error("官方插件市场事务尚未完成，请稍后重试");
+    return readJson(path.join(root, "zusage-fork-marketplace", "marketplace.json"), null);
   });
   const python = () => process.env.ZUSAGE_PLUGIN_PYTHON || (readConfig(configFile) || {}).python_path || (process.platform === "win32" ? "python" : "python3");
   const helper = path.join(__dirname, "runtime_lock.py");
@@ -443,7 +443,7 @@ function createUpdater(options) {
     let lastError = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const market = await cli(["marketplace", "update", "zusage-marketplace"]);
+        const market = await cli(["marketplace", "update", "zusage-fork-marketplace"]);
         diagnostics(market);
         return market;
       } catch (error) { lastError = error; }
@@ -694,7 +694,7 @@ function createUpdater(options) {
         }
         if (compareVersions(catalogRelease.version, selectedRelease.version) < 0)
           throw new Error("市场清单刷新后仍为 v" + catalogRelease.version + "，宿主未能拉取到 v"
-            + selectedRelease.version + "；可手动执行 zcode plugins marketplace update zusage-marketplace 排查，或改用 GitCode 镜像渠道");
+            + selectedRelease.version + "；可手动执行 zcode plugins marketplace update zusage-fork-marketplace 排查，或改用 GitCode 镜像渠道");
         record = refreshLocal();
         if (!record) throw cancelError("插件已卸载，更新已取消");
         if (auto && !state.auto) { abandon(); return; }

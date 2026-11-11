@@ -18,7 +18,7 @@ import zipfile
 
 PLUGIN = "zcode-token-usage-statusbar"
 PREFIX = f"plugins/{PLUGIN}/"
-PLUGIN_ID = f"{PLUGIN}@zusage-marketplace"
+PLUGIN_ID = f"{PLUGIN}@zusage-fork-marketplace"
 SEMVER = r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
 MAX_FILE = 8 * 1024 * 1024
 MAX_ASSET = 16 * 1024 * 1024
@@ -70,7 +70,7 @@ def identities(data, expected=None):
     require(isinstance(version, str) and re.fullmatch(SEMVER, version), "stable SEMVER required")
     require(manifest == compatibility and manifest.get("name") == PLUGIN,
             "plugin manifests/name disagree")
-    require(market.get("name") == "zusage-marketplace", "marketplace name disagrees")
+    require(market.get("name") == "zusage-fork-marketplace", "marketplace name disagrees")
     entries = market.get("plugins", [])
     require(isinstance(entries, list) and len(entries) == 1, "unexpected marketplace plugins")
     entry = entries[0]
@@ -454,8 +454,8 @@ def publish(root, repo, asset, manifest_path, approved=False, confirm=None, note
                 parts.extend((label[start:match.start()], match.group(1)))
                 start = end
             label = ("".join(parts) + label[start:]).strip().strip("#*_`").strip()
-        require(label and label.lower() not in (PLUGIN, "zusage-marketplace") and not re.fullmatch(
-            rf"(?:(?:{re.escape(PLUGIN)}|zusage-marketplace|release)\s*[-:–—]?\s*)?v?"
+        require(label and label.lower() not in (PLUGIN, "zusage-fork-marketplace") and not re.fullmatch(
+            rf"(?:(?:{re.escape(PLUGIN)}|zusage-fork-marketplace|release)\s*[-:–—]?\s*)?v?"
             + re.escape(manifest["version"]), label, re.I), "release notes are empty or placeholder-only")
         head = preflight(root, repo, manifest, asset)
         commands = [
